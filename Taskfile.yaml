@@ -1,0 +1,66 @@
+# go-task Taskfile — https://taskfile.dev
+# Run tasks with: task <name>
+# Install task runner: winget install Task.Task  OR  go install github.com/go-task/task/v3/cmd/task@latest
+
+version: '3'
+
+set: [pipefail]
+
+silent: false
+
+vars:
+  PROJECT: src/LibreHardwareMonitorPlugin/LibreHardwareMonitorPlugin.csproj
+  PLUGIN_SHORT_NAME: LibreHardwareMonitor
+  PACK_OUTPUT: LibreHardwareMonitor.lplug4
+
+env:
+  LOGIPLUGINTOOL: '{{env "USERPROFILE"}}/.dotnet/tools/logiplugintool.exe'
+
+tasks:
+  default:
+    desc: Build the plugin (Debug) — default task
+    cmds:
+      - task: build
+
+  build:
+    desc: Build the plugin in Debug configuration
+    cmds:
+      - dotnet build {{.PROJECT}} -c Debug
+
+  build:release:
+    desc: Build the plugin in Release configuration
+    cmds:
+      - dotnet build {{.PROJECT}} -c Release
+
+  clean:
+    desc: Clean all build output and remove the .link file
+    cmds:
+      - dotnet clean {{.PROJECT}}
+
+  watch:
+    desc: Hot-reload dev loop — rebuilds and reloads on every save
+    cmds:
+      - dotnet watch build --project {{.PROJECT}}
+
+  pack:
+    desc: Build (Release) then package into {{.PACK_OUTPUT}}
+    cmds:
+      - dotnet build {{.PROJECT}} -c Release
+      - $LOGIPLUGINTOOL pack bin/Release {{.PACK_OUTPUT}}
+      - $LOGIPLUGINTOOL verify {{.PACK_OUTPUT}}
+
+  install:
+    desc: Build (Release), write .link file, and reload the plugin in Logi Plugin Service
+    vars:
+      LINK_FILE: '{{env "LOCALAPPDATA"}}\Logi\LogiPluginService\Plugins\{{.PLUGIN_SHORT_NAME}}Plugin.link'
+      BUILD_DIR: '{{.ROOT_DIR}}\bin\Release\'
+    cmds:
+      - dotnet build {{.PROJECT}} -c Release
+      - cmd: powershell -NoProfile -Command "[System.IO.File]::WriteAllText('{{.LINK_FILE}}', '{{.BUILD_DIR}}')"
+      - task: reload
+
+  reload:
+    desc: Trigger plugin hot-reload in Logi Plugin Service (Windows)
+    platforms: [windows]
+    cmds:
+      - cmd /c start loupedeck:plugin/{{.PLUGIN_SHORT_NAME}}/reload

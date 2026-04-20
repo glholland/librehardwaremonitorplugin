@@ -1,10 +1,8 @@
 @echo off
-
-set PROJECT_DIR=%~1
-set OUTPUT_DIR=%~2
-
-xcopy /s /y %PROJECT_DIR%metadata\ %OUTPUT_DIR%metadata\
-
-%PROJECT_DIR%LoupedeckPluginTool\LoupedeckPluginTool.exe pack -input=%OUTPUT_DIR% -output=%OUTPUT_DIR%..\LibreHardwareMonitor.lplug4
-
-LogiPluginTool.exe install -path=%OUTPUT_DIR%..\LibreHardwareMonitor.lplug4
+rem Legacy script - packaging is now handled inline by the SDK-style .csproj build targets.
+rem Use 'logiplugintool pack' and 'logiplugintool install' directly if needed:
+rem
+rem   logiplugintool pack -input=<build-output-dir> -output=LibreHardwareMonitor.lplug4
+rem   logiplugintool install -path=LibreHardwareMonitor.lplug4
+rem
+rem During development, 'dotnet build' writes a .link file and triggers a hot reload automatically.

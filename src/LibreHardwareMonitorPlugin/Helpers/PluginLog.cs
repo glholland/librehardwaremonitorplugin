@@ -29,9 +29,5 @@ namespace NotADoctor99.LibreHardwareMonitorPlugin
         public static void Error(String text) => PluginLog._pluginLogFile?.Error(text);
 
         public static void Error(Exception ex, String text) => PluginLog._pluginLogFile?.Error(ex, text);
-
-        public static void WriteOpenLine() => PluginLog._pluginLogFile?.WriteOpenLine();
-
-        public static void WriteCloseLine() => PluginLog._pluginLogFile?.WriteCloseLine();
     }
 }
