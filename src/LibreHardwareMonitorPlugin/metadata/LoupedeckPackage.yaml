@@ -13,7 +13,7 @@ homePageUrl: https://github.com/notadoctor99/librehardwaremonitorplugin
 supportPageUrl: https://github.com/notadoctor99/librehardwaremonitorplugin/issues
 
 pluginFileName: LibreHardwareMonitorPlugin.dll
-pluginFolderWin: .
+pluginFolderWin: win
 
 supportedDevices:
     - LoupedeckCtFamily
